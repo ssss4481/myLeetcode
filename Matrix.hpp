@@ -6,7 +6,7 @@ class matrixMethod
 {
     public:
         template <class T>
-        static void Matrix_generation(std::vector< std::vector<T> > matrix)
+        static void Matrix_generation(std::vector< std::vector<T> > &matrix)
         {
             int m, n;
             std::cin >> m;
@@ -19,7 +19,7 @@ class matrixMethod
                     std::cin >> matrix[i][j];
                 }
             }
-            return matrix;
+            return;
         }
         /*
         input:
@@ -49,7 +49,7 @@ class vectorMethod
 {
     public:
         template <class T>
-        static void Vector_generation(std::vector<T> arr)
+        static void Vector_generation(std::vector<T> &arr)
         {
             int m;
             std::cin >> m;
@@ -58,11 +58,11 @@ class vectorMethod
             {
                 std::cin >> arr[i];
             }
-            return arr;
+            return;
         }
 
         template <class T>
-        static void printVector(std::vector<T> arr)
+        static void printVector(std::vector<T> &arr)
         {
             for(auto &i : arr)
             {
