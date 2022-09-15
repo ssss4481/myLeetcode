@@ -17,33 +17,29 @@ public:
     static const int follow = 0b11000000;
     static const int andWithFollow = 0b10000000;
 
-    static bool checkFollow(int input)
+    static bool checkTest(const int input, const int target, const int ans)
     {
-        if((input & follow) != andWithFollow)
-        {
-            return true;
-        }
-        return false;
+        return (input & target) == ans;
     }
 
-    static int checkByte(int input)
+    static int checkByte(const int input)
     {
-        if((input & oneByte) == andWithOneByte)
+        if(checkTest(input, oneByte, andWithOneByte))
         {
             return 0;
         }
 
-        if((input & twoByte) == andWithTwoByte)
+        if(checkTest(input, twoByte, andWithTwoByte))
         {
             return 1;
         }
 
-        if((input & threeByte) == andWithThreeByte)
+        if(checkTest(input, threeByte, andWithThreeByte))
         {
             return 2;
         }
 
-        if((input & fourByte) == andWithFourByte)
+        if(checkTest(input, fourByte, andWithFourByte))
         {
             return 3;
         }
@@ -58,7 +54,7 @@ public:
         {
             if(counter > 0)
             {
-                if(checkFollow(data[i]))
+                if(!checkTest(data[i], follow, andWithFollow))
                     return false;
                 --counter;
             }
@@ -69,10 +65,8 @@ public:
                     return false;
             }
         }
-        if(counter != 0)
-            return false;
 
-        return true;
+        return (counter == 0);
     }
 };
 
