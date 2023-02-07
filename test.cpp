@@ -17,8 +17,11 @@ void test(vector<int>& a)
 
 int main()
 {
-    vector<int> testbool (10, 0);
-    test(testbool);
+    string a = "abc";
+    if(a[0] == 'a')
+    {
+        cout << "here\n";
+    }
 
     return 0;
 }
