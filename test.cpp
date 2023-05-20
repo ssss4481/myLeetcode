@@ -2,7 +2,9 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <climits>
 #include "Matrix.hpp"
+
 
 using namespace std;
 
@@ -17,11 +19,10 @@ void test(vector<int>& a)
 
 int main()
 {
-    string a = "abc";
-    if(a[0] == 'a')
-    {
-        cout << "here\n";
-    }
+    bool a = true;
+    int c = 3;
+    c += a;
+    cout << c;
 
     return 0;
 }
