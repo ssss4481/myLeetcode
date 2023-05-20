@@ -6,15 +6,9 @@ class Solution
 public:
     int arraySign(vector<int>& nums) 
     {
-        bool positive;
-        if(nums[0] > 0)
-            positive = true;
-        else if(nums[0] < 0)
-            positive = false;
-        else
-            return 0;
-        
-        for(int i = 1; i < nums.size(); ++i)
+        bool positive = true;
+
+        for(int i = 0; i < nums.size(); ++i)
         {
             if(nums[i] == 0)
                 return 0;
