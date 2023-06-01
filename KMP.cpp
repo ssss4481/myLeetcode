@@ -92,7 +92,7 @@ vector<int> prefix(const string& p)
     int k = 0;
     for(int i = 1; i < m; ++i)
     {
-        while(k > 0 && p[k+1] != p[i])
+        while(k > 0 && p[k] != p[i])
             k = ret[k-1];
         if(p[k] == p[i])
             ++k;
@@ -106,6 +106,11 @@ void KMP(string& t, string& p)
     int n = t.length();
     int m = p.length();
     vector<int> pi = prefix(p);
+    for(int& k: pi)
+    {
+        cout << k << " ";
+    }
+    cout << "\n";
     int k = 0;
     for(int i = 0; i <= n; ++i)
     {
@@ -125,12 +130,11 @@ void KMP(string& t, string& p)
 
 int main(int argc, char const *argv[])
 {
-    string p = "ababaa";
-    string t = "ababaaababaa";
-    Solution sol = Solution();
-    sol.findAnagrams()
-
-
+    string p = "ababbaaa";
+    string t = "aababbababbbababbaaabb";
+    //Solution sol = Solution();
+    KMP(t, p);
+    
 
     return 0;
 }

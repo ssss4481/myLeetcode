@@ -1,28 +1,20 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <climits>
-#include "Matrix.hpp"
+#include <memory>
 
-
-using namespace std;
-
-void test(vector<int>& a)
+int main(int argc, char const *argv[])
 {
-    for(auto &val: a)
-    {
-        cout << val << " ";
-    }
-}
 
+    auto p = std::make_unique<int>(1);
+    
+    std::cout << *(p.get()) << "\n";
+    std::cout << *(p) << "\n";
 
-int main()
-{
-    bool a = true;
-    int c = 3;
-    c += a;
-    cout << c;
+    int* c = p.get();
+    std::cout << *c << "----\n";
+
+    std::unique_ptr<int> testP = nullptr;
+    std::unique_ptr<int> S;
+    S = std::move(nullptr);
 
     return 0;
 }
