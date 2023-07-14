@@ -1,12 +1,5 @@
 #include <memory>
 #include <vector>
-#include <assert.h> 
-
-enum CHILD
-{
-    toLeft,
-    toRight
-};
 
 class BSTNode
 {
@@ -15,7 +8,7 @@ private:
     std::unique_ptr<BSTNode> left;
     std::unique_ptr<BSTNode> right;
     BSTNode* parent;
-    int val;// == -1 will be the root.
+    int val;
 
 public:
     BSTNode(int val)
@@ -57,6 +50,25 @@ public:
         }
     }
 
+    BSTNode* findNode(const int& val)
+    {        
+        if(this->val == val)
+            return this;
+        
+        if(val < this->val)
+        {          
+            if(this->left == nullptr)
+                return nullptr;            
+            return this->left->findNode(val);
+        }
+        else
+        {   
+            if(this->right == nullptr)
+                return nullptr;            
+            return this->right->findNode(val);
+        }
+    }
+
     void remove(const int& val)
     {
         BSTNode* target = this->findNode(val);
@@ -64,7 +76,7 @@ public:
         if(target == nullptr)
             return;
         
-        if(target->left.get() != nullptr && target->right.get() != nullptr)//target has two child.
+        if(target->left.get() != nullptr && target->right.get() != nullptr)
         {
             BSTNode* newValNode = target->left.get();
             
@@ -73,15 +85,18 @@ public:
             
             target->val = newValNode->val;
 
-            if(newValNode->parent == target)            
-                target->left = std::move(newValNode->left);            
-            else            
+            if(newValNode->parent == target)
+            {
+                target->left = std::move(newValNode->left);
+            }
+            else
+            {
                 newValNode->parent->right = std::move(newValNode->left);
-            
+            }
             return;         
         }
 
-        if(target->left.get() == nullptr && target->right.get() == nullptr)//target is a leaf
+        if(target->left.get() == nullptr && target->right.get() == nullptr)
         {
             if(target->isLeftChild)
                 target->parent->left.reset();
@@ -90,40 +105,34 @@ public:
             return;
         }
 
-        //Below this line, the target is not a leaf. It has exact only one child.
-        if(target->isLeftChild)        
-            this->replaceOneChildNode(target, toLeft);        
-        else//target is right child
-            this->replaceOneChildNode(target, toRight);
 
-    }
-    
-    BSTNode* findNode(const int& val)
-    {        
-        if(this->val == val)
-            return this; 
+        if(target->isLeftChild)
+        {
+            if(target->left.get() != nullptr)
+            {
+                target->left->parent = target->parent;
+                target->parent->left = std::move(target->left);
+            }
+            else
+            {
+                target->right->parent = target->parent;
+                target->parent->left = std::move(target->right);
+            }           
 
-        if(val < this->val && this->left != nullptr)                 
-            return this->left->findNode(val);        
-        
-        if(this->right != nullptr)
-            return this->right->findNode(val);
-
-        return nullptr;
-    }
-
-    void replaceOneChildNode(BSTNode* target, int mode)
-    {
-        assert(target->left.get() != nullptr || target->right.get() != nullptr);
-
-        std::unique_ptr<BSTNode> childForReplacement = (target->left.get() != nullptr ? std::move(target->left) : std::move(target->right));           
-
-        childForReplacement->parent = target->parent;
-
-        if(mode == toLeft)          
-            target->parent->left = std::move(childForReplacement);       
+        }
         else
-            target->parent->right = std::move(childForReplacement); 
+        {
+            if(target->left.get() != nullptr)
+            {
+                target->left->parent = target->parent;
+                target->parent->right = std::move(target->left);
+            }
+            else
+            {
+                target->right->parent = target->parent;
+                target->parent->right = std::move(target->right);
+            }         
+        }  
 
     }
 
@@ -149,7 +158,7 @@ public:
     {   
         int idx = key % this->hashKey;
         if(this->hashTable[idx] == nullptr)
-            this->hashTable[idx] = new BSTNode(-1);//root of the BST
+            this->hashTable[idx] = new BSTNode(-1);
         this->hashTable[idx]->insert(key);        
     }
     
@@ -169,9 +178,3 @@ public:
         return this->hashTable[idx]->contains(key);        
     }
 };
-
-int main(int argc, char const *argv[])
-{
-    
-    return 0;
-}
