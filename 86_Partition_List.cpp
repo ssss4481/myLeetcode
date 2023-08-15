@@ -1,24 +1,64 @@
-struct ListNode;
-
-struct ListNode
-{
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
+#include <iostream>
+#include "ListNode.hpp"
 
 class Solution 
 {
 public:
+    void append(ListNode* &tail, ListNode* newTail)
+    {
+        tail->next = newTail;
+        tail = newTail;
+    }
+
     ListNode* partition(ListNode* head, int x) 
     {
-        ListNode* lessPart = nullptr;
-        ListNode* greaterOrEqualPart = nullptr;
+        if(head == nullptr)
+        {
+            return head;
+        }
 
-        
-        return nullptr;
+        ListNode* lessPartHead = new ListNode(0);
+        ListNode* greaterOrEqualPartHead = new ListNode(0);
+        ListNode* lessPartTail = lessPartHead;
+        ListNode* greaterOrEqualPartTail = greaterOrEqualPartHead;
+
+        while(head != nullptr)
+        {
+            if(head->val < x)
+            {
+                append(lessPartTail, head);
+            }
+            else
+            {
+                append(greaterOrEqualPartTail, head);
+            }
+            head = head->next;
+        }
+
+        ListNode* temp = lessPartHead;
+        lessPartHead = lessPartHead->next;
+        delete temp;
+        temp = greaterOrEqualPartHead;
+        greaterOrEqualPartHead = greaterOrEqualPartHead->next;
+        if(greaterOrEqualPartTail == temp)
+        {
+            greaterOrEqualPartTail = nullptr;
+        }
+        delete temp;
+
+        if(lessPartHead != nullptr)
+        {
+            lessPartTail->next = greaterOrEqualPartHead;
+            if(greaterOrEqualPartTail != nullptr)
+            {
+                greaterOrEqualPartTail->next = nullptr;            
+            }
+            return lessPartHead;
+        }
+        else
+        {
+            return greaterOrEqualPartHead;
+        }
     }
 };
 
