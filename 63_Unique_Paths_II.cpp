@@ -2,12 +2,56 @@
 #include <vector>
 using namespace std;
 
+class Solution 
+{
+public:
+    int uniquePathsWithObstacles(const vector<vector<int>>& obstacleGrid)  
+    {
+        if(obstacleGrid[0][0] || obstacleGrid.back().back())
+        {
+            return 0;        
+        }               
+        
+        const int m = obstacleGrid.size();
+        const int n = obstacleGrid[0].size();        
+
+        vector<int> previous (n, 0);
+        vector<int> dp(n, 0);
+
+        previous[0] = 1;
+        for(int i = 1; i < n; ++i)
+        {
+            if(!obstacleGrid[0][i])
+            {
+                previous[i] += previous[i-1];
+            }
+        }
+
+        for(int round = 1; round < m; ++round)
+        {
+            dp[0] = (!obstacleGrid[round][0] && previous[0] ? 1 : 0);
+            for(int i = 1; i < n; ++i)
+            {
+                if(!obstacleGrid[round][i])
+                {
+                    dp[i] += (dp[i-1] + previous[i]);
+                }
+            }            
+            /*previous = std::move(dp);
+            dp = vector<int> (n, 0);*/
+            dp.swap(previous);
+            fill(dp.begin(), dp.end(), 0);
+        }
+        return previous.back();        
+    }
+};
 
 
 
 
 
-class Solution
+
+class Solution2
 {
 public:
     int limit_i;
