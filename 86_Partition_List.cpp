@@ -7,7 +7,7 @@ public:
     void append(ListNode* &tail, ListNode* newTail)
     {
         tail->next = newTail;
-        tail = newTail;
+        tail = newTail;        
     }
 
     ListNode* partition(ListNode* head, int x) 
