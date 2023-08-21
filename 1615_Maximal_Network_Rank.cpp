@@ -5,11 +5,51 @@
 
 using namespace std;
 
+class Solution 
+{
+public:
+    int maximalNetworkRank(int n, vector<vector<int>>& roads) 
+    {
+        int ret = 0;
+        unordered_set<int> info[n];
+
+        for(auto& edge: roads)
+        {
+            info[edge[0]].insert(edge[1]);
+            info[edge[1]].insert(edge[0]);
+        }
+
+        for(int i = 0; i < n-1; ++i)
+        {
+            int ceiling = 0;
+            for(int j = i+1; j < n; ++j)
+            {
+                if(info[j].size() < ceiling)
+                {
+                    continue;
+                }
+                ceiling = info[j].size();
+                int rank = info[i].size() + ceiling;
+                if(info[i].count(j) == 1)
+                {
+                    --rank;
+                }
+                ret = max(ret, rank);
+            }
+        }
+        return ret;        
+    }
+};
+
+
+
+
+
 
 
 
 typedef pair<int, unordered_set<int>> pi;
-class Solution 
+class Solution2 
 {
 public:
     void printInfo(vector<pi>&  piArr)
