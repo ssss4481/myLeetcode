@@ -48,3 +48,31 @@ public:
         }
     }
 };
+
+/*
+        auto check = [&](auto compare)
+        {
+            for(int i = 1; i < n; ++i)
+            {
+                if(compare(nums[i-1], nums[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        can also be:
+
+        auto check = [&](bool (*compare)(int&, int&))
+        {
+            for(int i = 1; i < n; ++i)
+            {
+                if(compare(nums[i-1], nums[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        };        
+*/
