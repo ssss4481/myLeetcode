@@ -1,23 +1,27 @@
-#include <memory>
 #include <vector>
-#include <assert.h> 
+#include <iostream>
+
+static const int n = []()
+{
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 
 
 class MyHashMap 
 {
 public:
-    vstd::ector<int> table;
+    std::vector<int> table;
 
     MyHashMap() 
     {
-        this->
-        
-    }
-    
+        this->table = std::vector<int> (1000001, -1);
+    }    
     void put(int key, int value) 
     {
-        this->table[key] = value;
-        
+        this->table[key] = value;        
     }
     
     int get(int key) 
@@ -30,7 +34,6 @@ public:
         this->table[key] = -1;        
     }
 };
-
 
 
 
@@ -48,99 +51,137 @@ private:
     std::unique_ptr<BSTNode> left;
     std::unique_ptr<BSTNode> right;
     BSTNode* parent;
-    int val;// == -1 will be the root.
+    int key;// == -1 will be the root.
+    int value;
 
 public:
-    BSTNode(int val)
+    BSTNode(int key)
     {
         this->isLeftChild = false;
         this->left = nullptr;
         this->right = nullptr;
         this->parent = nullptr;
-        this->val = val;
+        this->key = key;
     }
 
-    BSTNode(int val, BSTNode* parent)
+    BSTNode(int key, int value, BSTNode* parent)
     {
-        this->isLeftChild = (val < parent->val);
+        this->isLeftChild = (key < parent->key);
         this->left = nullptr;
         this->right = nullptr;
         this->parent = parent;
-        this->val = val;
+        this->key = key;
+        this->value = value;
     }
 
-    void insert(const int& val)
+    int getValue()
     {
-        if(val == this->val)
-            return;
+        return this->value;
+    }
 
-        if(val < this->val)
+    void insert(const int& key, const int& value)
+    {
+        if(key == this->key)
+        {
+            this->value = value;
+            return;
+        }
+
+        if(key < this->key)
         {
             if(this->left == nullptr)
-                this->left = std::make_unique<BSTNode>(val, this);
+            {
+                this->left = std::make_unique<BSTNode>(key, value, this);
+            }
             else
-                this->left->insert(val);
+            {
+                this->left->insert(key, value);
+            }
         }
         else
         {
             if(this->right == nullptr)
-                this->right = std::make_unique<BSTNode>(val, this);
+            {
+                this->right = std::make_unique<BSTNode>(key, value, this);
+            }
             else
-                this->right->insert(val);         
+            {
+                this->right->insert(key, value);         
+            }
         }
     }
 
-    void remove(const int& val)
+    void remove(const int& key)
     {
-        BSTNode* target = this->findNode(val);
+        BSTNode* target = this->findNode(key);
         
         if(target == nullptr)
+        {
             return;
+        }
         
         if(target->left.get() != nullptr && target->right.get() != nullptr)//target has two child.
         {
             BSTNode* newValNode = target->left.get();
             
             while(newValNode->right.get() != nullptr)
+            {
                 newValNode = newValNode->right.get();
+            }
             
-            target->val = newValNode->val;
+            target->key = newValNode->key;
 
-            if(newValNode->parent == target)            
+            if(newValNode->parent == target)
+            {
                 target->left = std::move(newValNode->left);            
-            else            
+            }
+            else
+            {
                 newValNode->parent->right = std::move(newValNode->left);
-            
+            }            
             return;         
         }
 
         if(target->left.get() == nullptr && target->right.get() == nullptr)//target is a leaf
         {
             if(target->isLeftChild)
+            {
                 target->parent->left.reset();
+            }
             else
+            {
                 target->parent->right.reset();
+            }                
             return;
         }
 
         //Below this line, the target is not a leaf. It has exact only one child.
-        if(target->isLeftChild)        
+        if(target->isLeftChild)
+        {
             this->replaceOneChildNode(target, toLeft);        
+        }
         else//target is right child
+        {
             this->replaceOneChildNode(target, toRight);
-
+        }
     }
     
-    BSTNode* findNode(const int& val)
+    BSTNode* findNode(const int& key)
     {        
-        if(this->val == val)
+        if(this->key == key)
+        {
             return this; 
+        }
 
-        if(val < this->val && this->left != nullptr)                 
-            return this->left->findNode(val);        
+        if(key < this->key && this->left != nullptr)
+        {
+            return this->left->findNode(key);        
+        }
         
         if(this->right != nullptr)
-            return this->right->findNode(val);
+        {
+            return this->right->findNode(key);
+        }
 
         return nullptr;
     }
@@ -153,58 +194,88 @@ public:
 
         childForReplacement->parent = target->parent;
 
-        if(mode == toLeft)          
+        if(mode == toLeft)
+        {
             target->parent->left = std::move(childForReplacement);       
+        }          
         else
+        {
             target->parent->right = std::move(childForReplacement); 
+        }
 
     }
 
-    bool contains(const int& val)
-    {
-        return this->findNode(val) != nullptr;
-    }
+    // bool contains(const int& key)
+    // {
+    //     return this->findNode(key) != nullptr;
+    // }
 };
 
 
-class MyHashSet {
+class MyHashMap
+{
 private:
     const int hashKey = 901;
     std::vector<BSTNode*> hashTable;
 
 public:
-    MyHashSet() 
+    MyHashMap() 
     {
         this->hashTable = std::vector<BSTNode*> (this->hashKey, nullptr);        
     }
     
-    void add(int key) 
+    void put(int key, int value) 
     {   
         int idx = key % this->hashKey;
         if(this->hashTable[idx] == nullptr)
+        {
             this->hashTable[idx] = new BSTNode(-1);//root of the BST
-        this->hashTable[idx]->insert(key);        
+        }
+        this->hashTable[idx]->insert(key, value);
     }
     
     void remove(int key)
     { 
         int idx = key % this->hashKey;
         if(this->hashTable[idx] == nullptr)
+        {
             return;
+        }
         this->hashTable[idx]->remove(key);       
     }
     
-    bool contains(int key) 
+    int get(int key) 
     {
         int idx = key % this->hashKey;
         if(this->hashTable[idx] == nullptr)
-            return false;
-        return this->hashTable[idx]->contains(key);        
+        {
+            return -1;
+        }
+        BSTNode* pTargetNode = this->hashTable[idx]->findNode(key);
+        if(pTargetNode == nullptr)
+        {
+            return -1;
+        }
+        return pTargetNode->getValue();        
     }
 };
 
+
+
+
+
 int main(int argc, char const *argv[])
 {
-    
+    auto a = MyHashMap();
+    a.put(1, 1);
+    a.put(2, 2);
+    std::cout << a.get(1) << '\n';
+    std::cout << a.get(3) << '\n';
+    a.put(2, 1);
+    std::cout << a.get(2) << '\n';
+    a.remove(2);
+    std::cout << a.get(2) << '\n'; 
+
     return 0;
 }
+
