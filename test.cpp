@@ -1,25 +1,13 @@
 #include <iostream>
-#include <memory>
+#include <vector>
+using namespace std;
 
 int main(int argc, char const *argv[])
 {
-
-    // auto p = std::make_unique<int>(1);
-    
-    // std::cout << *(p.get()) << "\n";
-    // std::cout << *(p) << "\n";
-
-    // int* c = p.get();
-    // std::cout << *c << "----\n";
-
-    // std::unique_ptr<int> testP = nullptr;
-    // std::unique_ptr<int> S;
-    // S = std::move(nullptr);
-    if(1 && 1)
-    {
-        std::cout << "yes\n";
-    }
-
-
+    vector<vector<int>> a {{1},{2},{3}};
+    auto& t = a[0];
+    cout << t.size() << '\n';
+    a[0][0]=2;
+    cout << t.size() << '\n';
     return 0;
 }

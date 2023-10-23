@@ -1,39 +1,46 @@
 #include <iostream>
 
-bool isPowerOfFour(int n)
+const int n = []()
 {
-    if(n <= 0)
-        return false;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 
-    if(n == 1)
-        return true;
-
-    int t = 1;
-    while(t < 0x40000000)
+class Solution 
+{
+public:
+    bool isPowerOfFour(int n)
     {
-        t <<= 2;
-        if(t == n)
-        {
+        if(n <= 0)
+            return false;
+
+        if(n == 1)
             return true;
-        }
 
-        if(t > n)
+        int t = 1;
+        while(t < 0x40000000 && t < n)
         {
-            break;
+            t <<= 2;
+            if(t == n)
+            {
+                return true;
+            }          
         }
-
+        return false;
     }
-    return false;
-}
+
+};
 
 int main()
 {
-    std::cout << isPowerOfFour(1) << "\n";
-    std::cout << isPowerOfFour(16) << "\n";
-    std::cout << isPowerOfFour(15) << "\n";
-    std::cout << isPowerOfFour(13) << "\n";
-    std::cout << isPowerOfFour(2) << "\n";
-    std::cout << isPowerOfFour(1) << "\n";
-    std::cout << isPowerOfFour(1073741824) << "\n";
+    std::cout << Solution().isPowerOfFour(1) << "\n";
+    std::cout << Solution().isPowerOfFour(16) << "\n";
+    std::cout << Solution().isPowerOfFour(15) << "\n";
+    std::cout << Solution().isPowerOfFour(13) << "\n";
+    std::cout << Solution().isPowerOfFour(2) << "\n";
+    std::cout << Solution().isPowerOfFour(1) << "\n";
+    std::cout << Solution().isPowerOfFour(1073741824) << "\n";
     return 0;
 }
