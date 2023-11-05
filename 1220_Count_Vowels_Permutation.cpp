@@ -8,22 +8,15 @@
 #define _o_ 3
 #define _u_ 4
 
-const int fast_io = []()
-{
-    std::ios_base::sync_with_stdio(false);
-    std::cout.tie(NULL);
-    std::cin.tie(NULL);
-    return 0;
-}();
 
 class Solution//correct 
 {
 public:
     int countVowelPermutation(int n) 
     {
-        std::vector<int> dp1(5, 1);
-        std::vector<int> dp2(5, 0);
-        int mod = 1000000007;
+        std::vector<long long int> dp1(5, 1);
+        std::vector<long long int> dp2(5, 0);
+        const int mod = 1000000007;
         for(int i = 1; i < n; ++i)
         {
             dp2[_a_] = (dp1[_e_] + dp1[_i_] + dp1[_u_])%mod;
@@ -34,7 +27,7 @@ public:
 
             dp1.swap(dp2);
         }  
-        int ret = 0;
+        long long int ret = 0;
         for(auto& n:dp1)
         {
             ret += n;
