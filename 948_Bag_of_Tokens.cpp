@@ -1,18 +1,23 @@
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
-using namespace std;
-
-
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 class Solution
 {
 public:
-    int bagOfTokensScore(vector<int>& tokens, int power)
+    int bagOfTokensScore(std::vector<int>& tokens, int power)
     {
         int lo = 0;
         int hi = tokens.size()-1;
 
-        sort(tokens.begin(), tokens.end());
+        std::sort(tokens.begin(), tokens.end());
 
         int score = 0;
 
@@ -43,7 +48,3 @@ public:
 };
 
 
-int main()
-{
-    return 0;
-}
