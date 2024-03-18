@@ -1,7 +1,58 @@
 #include <iostream>
 #include <vector>
-using namespace std;
+#include <algorithm>
 
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+
+class Solution
+{
+public:
+    std::vector<std::vector<int>> insert(std::vector<vector<int>>& intervals, vector<int>& newInterval) 
+    {
+        auto overlapping = [](std::vector<int>& interval1, std::vector<int>& interval2)
+        {
+            return !(interval1[1] < interval2[0] || interval1[0] > interval2[1]);
+        };
+
+        int i = 0;
+        std::vector<std::vector<int>> ret;
+
+        while(i < intervals.size() && intervals[i][1] < newInterval[0])
+        {
+            ret.push_back(intervals[i++]);
+        }
+
+        while (i < intervals.size())
+        {
+            if(overlapping(intervals[i], newInterval))
+            {
+                newInterval[0] = std::min(intervals[i][0], newInterval[0]);
+                newInterval[1] = std::max(intervals[i][1], newInterval[1]);
+                ++i;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        ret.push_back(newInterval);
+
+        while (i < intervals.size())
+        {
+            ret.push_back(intervals[i++]);
+        }     
+        return ret;
+    }    
+};
+
+using namespace std;
 
 class Solution2 
 {
