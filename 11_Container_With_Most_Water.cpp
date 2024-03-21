@@ -1,5 +1,38 @@
-#include <iostream>
 #include <vector>
+#include <algorithm>
+#include <iostream>
+
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+
+class Solution 
+{
+public:
+    int maxArea(std::vector<int>& height) 
+    {
+        int lo = 0;
+        int hi = static_cast<int>(height.size())-1;
+        int maxVol = 0;
+        while (lo < hi)
+        {
+            maxVol = std::max(maxVol, std::min(height[lo], height[hi])*(hi-lo));
+            if(height[lo] < height[hi])
+            {
+                ++lo;
+            }
+            else
+            {
+                --hi;
+            }
+        }
+        return maxVol;
+    }
+};
 
 
 int maxArea(std::vector<int>& height)
