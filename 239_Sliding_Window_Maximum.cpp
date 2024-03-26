@@ -2,101 +2,73 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
-using namespace std;
 
-
-class Solution 
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+class Solution
 {
 public:
-    vector<int> maxSlidingWindow(vector<int>& nums, int k) 
+    std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) 
     {
-        typedef pair<int, int> pi;
+        std::deque<int> dq;
+        dq.push_back(0);
+        for(int i = 1; i < k; ++i)
+        {
+            while(!dq.empty() && nums[dq.back()] <= nums[k])
+            {
+                dq.pop_back();
+            }
+            dq.push_back(i);
+        }
+
+
+
+    }
+};
+
+
+class Solution1 
+{
+public:
+    std::vector<int> maxSlidingWindow(std::vector<int>& nums, int k) 
+    {
+        typedef std::pair<int, int> pi;
         const int n = nums.size();
-        vector<int> ret;
-        auto cmp = [](const pi& a, const pi& b)-> bool {return a.first < b.first;};
-        priority_queue<pi, vector<pi>, decltype(cmp)> pq(cmp);
+
+        auto cmp = [] (pi& a, pi& b)
+        {
+            return a.first < b.first;
+        };
+
+        std::priority_queue<pi, std::vector<pi>, decltype(cmp)> PQ(cmp);
+
         for(int i = 0; i < k-1; ++i)
         {
-            pq.push(make_pair(nums[i], i));
+            PQ.push({nums[i], i});
         }
 
-        int lo = 0;
-        int hi = k-1;
-
-        while (hi < n)
+        std::vector<int> ret;
+        int lowerBound = 0;
+        for(int i = k-1; i < n; ++i)
         {
-            pq.push(make_pair(nums[hi], hi));
-            while(pq.top().second < lo)
+            PQ.push({nums[i], i});
+            while(PQ.top().second < lowerBound)
             {
-                pq.pop();
+                PQ.pop();
             }
-            ret.push_back(pq.top().first);
-            ++lo;
-            ++hi;            
-        }   
-        return ret;                
-    }
-};
-
-
-
-
-class Solution2
-{
-public:
-    int localMaxIdx;
-    int localMax;  
-
-    vector<int> maxSlidingWindow(vector<int>& nums, int k) 
-    {     
-        if(k == 1)
-        {
-            return nums;
-        }          
-
-        const int n = nums.size();
-        vector<int> ret;
-        //init
-        this->localMaxIdx = max_element(nums.begin(), nums.begin()+k) - nums.begin();
-        this->localMax = nums.at(this->localMaxIdx);
-        ret.push_back(this->localMax);
-        //cout << "here\n";
-        for(int i = k; i < n; ++i)
-        {
-            if(i - this->localMaxIdx > k-1)
-            {
-                this->maxInWindow(nums, i, k);
-            }
-            //cout << "--1--\n";
-            if(nums.at(i) > this->localMax)
-            {
-                this->localMaxIdx = i;
-                this->localMax = nums.at(i);
-            }
-            //cout << "--2--\n";
-            ret.push_back(this->localMax);
+            ret.push_back(PQ.top().first);
+            ++lowerBound;
         }
-     
         return ret;
     }
-
-
-    void maxInWindow(vector<int>& nums, int hi, int k)
-    {
-        //cout << hi << ' ' << k << "in maxInWindow\n";
-        this->localMaxIdx = max_element(nums.begin()+hi-k+1, nums.begin()+hi+1) - nums.begin();
-        this->localMax = nums.at(this->localMaxIdx);
-    }
-
-
 };
 
-int main(int argc, char const *argv[])
-{
-    vector <int> a = {1, 2};
-    cout << *max_element(a.begin(), a.begin()+2+1);
-    priority_queue<int> pq;
-    
 
-    return 0;
-}
+
+
+
