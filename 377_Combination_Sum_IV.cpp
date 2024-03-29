@@ -1,40 +1,34 @@
 #include <vector>
-using namespace std;
 
 class Solution 
 {
 public:
-    int count;
-    int sum;
+    std::vector<int> dp;
 
-    void backTrack(vector<int>& nums, int& target, int i)
+    int combinationSum4(std::vector<int>& nums, int target)     
     {
+        this->dp = std::vector<int> (target+1, -1);
+        this->dp[0] = 1;
+        backTrack(nums, target);
+        return this->dp[target];    
+    }
 
-        this->sum += nums[i];
-        if(this->sum == target)
+    int backTrack(std::vector<int>& nums, int target)
+    {
+        if(target < 0)
         {
-            ++this->count;
+            return 0;
         }
-        else if(this->sum < target)
+        if(this->dp[target] == -1)
         {
-            for(int j = 0; j < nums.size(); ++j)
+            int result = 0;
+            for(auto&num : nums)
             {
-                backTrack(nums, target, j);
+                result += backTrack(nums, target-num);
             }
+            this->dp[target] = result;
         }
-        this->sum -= nums[i];
-        return;        
+        return this->dp[target];        
     }
 
-
-    int combinationSum4(vector<int>& nums, int target)     
-    {
-        this->count = 0;
-        this->sum = 0;
-        for(int i = 0; i < nums.size(); ++i)
-        {
-            backTrack(nums, target, i);
-        }
-        return this->count;       
-    }
 };

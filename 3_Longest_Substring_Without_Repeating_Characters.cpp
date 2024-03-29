@@ -15,6 +15,36 @@ class Solution
 public:
     int lengthOfLongestSubstring(std::string s) 
     {
+        const int len = s.length();
+        bool record[256] = {false};
+        int lo = 0;
+        int ret = 0;
+        for(int i = 0; i < len; ++i)
+        {
+            if(record[s[i]])
+            {
+                ret = std::max(ret, i-lo);
+                while(s[lo] != s[i])
+                {
+                    record[s[lo++]] = false;
+                }
+                ++lo;
+            }
+            record[s[i]] = true;
+        }
+        ret = std::max(ret, len-lo);
+        return ret;
+    }
+};
+
+
+
+
+class Solution3 
+{
+public:
+    int lengthOfLongestSubstring(std::string s) 
+    {
         std::unordered_map<char, u_int32_t> charToIdx;
 
         u_int32_t                           start_idx {0};
