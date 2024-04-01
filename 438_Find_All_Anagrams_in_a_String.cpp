@@ -1,60 +1,56 @@
 #include<vector>
+#include <string>
+#include <iostream>
 
-using namespace std;
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 
-class Solution
+class Solution 
 {
 public:
-    vector<int> findAnagrams(string s, string p)
+    std::vector<int> findAnagrams(std::string s, std::string p) 
     {
-        vector<int> ret;
-
         if(s.length() < p.length())
-            return ret;
-
-
-        vector<int> pCount (26, 0);
-        vector<int> sCount(26, 0);
-
-        for(int i = 0; i < p.length(); ++i)
         {
-            ++pCount[int(p[i]-'a')];
+            return {};
+        }
+
+        std::vector<int> pCount(26, 0);
+        std::vector<int> allZero(26, 0);
+        
+        for(auto& c: p)
+        {
+            ++pCount[static_cast<uint32_t>(c-'a')];
         }
 
         for(int i = 0; i < p.length(); ++i)
         {
-            ++sCount[int(s[i]-'a')];
+            --pCount[static_cast<uint32_t>(s[i]-'a')];
         }
 
-        int begin = 0;
-        int last = p.length()-1;
+        std::vector<int> ret;
+        int lo = 0;
+        int hi = lo+p.length();
 
-        while(true)
+        while (hi < s.length())
         {
-            if(pCount == sCount)
+            if(pCount == allZero)
             {
-                ret.push_back(begin);
+                ret.push_back(lo);
             }
-            --sCount[int(s[begin]-'a')];
-            ++begin;
-            ++last;
-            if(last < s.length())
-            {
-                ++sCount[int(s[last]-'a')];
-            }
-            else
-            {
-                break;
-            }
+            ++pCount[static_cast<uint32_t>(s[lo++]-'a')];
+            --pCount[static_cast<uint32_t>(s[hi++]-'a')];
         }
+        if(pCount == allZero)
+        {
+            ret.push_back(lo);
+        }
+
         return ret;
     }
 };
-
-int main(int argc, char const *argv[])
-{
-
-
-
-    return 0;
-}
