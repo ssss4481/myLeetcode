@@ -1,9 +1,95 @@
+#include <algorithm>
 #include <vector>
 #include <iostream>
 
+class Solution 
+{
+public:
+    int search(std::vector<int>& nums, int target) 
+    {   
+        if(nums.size() == 1)
+        {
+            if(nums[0] == target)
+            {
+                return 0;
+            }
+            return -1;
+        }
+
+        std::vector<int>::iterator pLB;//pointer of lower bound.
+
+        if(nums.back() > nums.front())
+        {
+            if(target > nums.back() || target < nums.front())
+            {
+                return -1;
+            }
+
+            pLB = std::lower_bound(nums.begin(), nums.end(), target);
+            
+            if(*pLB == target)
+            {
+                return static_cast<int>(pLB-nums.begin());
+            }
+            return -1;
+        }
+
+        int rotatePos = this->rotateStart(nums, 0, static_cast<int>(nums.size()-1));
+
+        if(target > nums[rotatePos-1] || target < nums[rotatePos])
+        {
+            return -1;
+        }
+        
+        if(target >= nums[0])
+        {
+            pLB = std::lower_bound(nums.begin(), nums.begin()+rotatePos, target);
+        }
+        else
+        {
+            pLB = std::lower_bound(nums.begin()+rotatePos, nums.end(), target);
+        }
+
+        if(pLB != nums.end() && *pLB == target)
+        {
+            return static_cast<int>(pLB-nums.begin());
+        }        
+        return -1;
+    }
+
+    int rotateStart(std::vector<int>& nums, int lo, int hi)
+    {
+        int mid = (lo+hi)/2;
+        if(lo+1 == hi)
+        {
+            if(nums[lo] < nums[hi])
+            {
+                return lo;
+            }
+            return hi;
+        }
+
+        if(nums[mid] > nums[mid+1])
+        {
+            return mid+1;
+        }
+
+        if(nums[mid] > nums[0])
+        {
+            return rotateStart(nums, mid, hi);
+        }
+        else
+        {
+            return rotateStart(nums, lo, mid);
+        }
+    }
+};
+
+
+
 using namespace std;
 
-class Solution 
+class Solution2 
 {
 public:
 
@@ -125,15 +211,9 @@ public:
 
 int main(int argc, char const *argv[])
 {
-    vector<int> test = {3, 5, 1};
-
-
-
-
-
-    cout << Solution().search(test, 3) << '\n';
-
-
+    std::vector<int> a = {4,5,6,7,8,0,1,2,3};
+    std::cout << Solution().rotateStart(a, 0, a.size()-1) << '\n';
     
+
     return 0;
 }
