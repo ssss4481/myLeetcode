@@ -1,51 +1,46 @@
-#include <iostream>
 #include <vector>
-#include "Matrix.hpp"
+#include <iostream>
 
-using namespace std;
-
-//vector< vector<T> > Matrix_generation(T def);
-//void printMatrix(vector<vector<T>>& matrix);
-
-void DFS(int x, int y, vector<vector<char>>& grid, vector< vector<bool> > &visit)
+static const int fast_io = []()
 {
-    int m = grid.size();
-    int n = grid[0].size();
-    if(x < 0 || y < 0 || x >= m || y >= n || grid[x][y] == '0' || visit[x][y])
-        return;
-    visit[x][y] = true;
-    DFS(x+1, y, grid, visit);
-    DFS(x, y+1, grid, visit);
-    DFS(x-1, y, grid, visit);
-    DFS(x, y-1, grid, visit);
-}
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 
-int numIslands(vector<vector<char>>& grid)
+class Solution 
 {
-    int m = grid.size();
-    int n = grid[0].size();
-    int count = 0;
-    vector< vector<bool> > visit (m , vector<bool> (n, false));
-    for(int i = 0; i < m; ++i)
+public:
+    int numIslands(std::vector<std::vector<char>>& grid) 
     {
-        for(int j = 0; j < n; ++j)
+        int count = 0;
+        for(int i = 0; i < grid.size(); ++i)        
         {
-            if(!visit[i][j] && grid[i][j] == '1')
+            for(int j = 0; j < grid[0].size(); ++j)
             {
-                DFS(i, j, grid, visit);
-                ++count;
+                if(grid[i][j] == '1')
+                {
+                    ++count;
+                    DFS(grid, i, j);
+                }
             }
         }
+        return count;
     }
-    return count;
-}
 
-int main()
-{
-    vector< vector<char> > grid;
-    matrixMethod::Matrix_generation(grid);
-    matrixMethod::printMatrix(grid);
-    cout << numIslands(grid) << "\n";
+    void DFS(std::vector<std::vector<char>>& grid, int i, int j)
+    {
+        if(i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] != '1')
+        {
+            return;
+        }
 
-    return 0;
-}
+        grid[i][j] = '0';
+
+        DFS(grid, i+1, j);
+        DFS(grid, i, j+1);
+        DFS(grid, i-1, j);
+        DFS(grid, i, j-1);
+    }
+};
