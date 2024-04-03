@@ -136,6 +136,10 @@ public:
                 for(int i = 1; i < mailGroupsVec.size(); ++i)
                 {
                     auto mailSetI =  mailGroupsVec[i];
+                    if(mailSetI.empty())
+                    {
+                        continue;
+                    }
                     bool common = false;
                     for(int j = 0; j < res.size(); ++j)
                     {
@@ -151,7 +155,17 @@ public:
 
                         if(common)
                         {
-                            mailSetJ.insert(mailSetI.begin(), mailSetI.end());
+                            if(mailSetI.size() <= mailSetJ.size())
+                            {
+                                mailSetJ.insert(mailSetI.begin(), mailSetI.end());
+                                mailSetI.clear();
+                            }
+                            else
+                            {
+                                mailSetI.insert(mailSetJ.begin(), mailSetJ.end());
+                                mailSetI.swap(mailSetJ);
+                                mailSetI.clear();
+                            }
                             break;
                         }
                     }
