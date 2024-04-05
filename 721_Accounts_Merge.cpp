@@ -13,175 +13,120 @@ static const int fast_io = []()
     return 0;
 }();
 
-void printer(std::unordered_map<int, std::vector<std::string>>& parentToAccountInfo)
-{
-    for(auto& P : parentToAccountInfo)
-    {
-        for(auto& str: P.second)
-        {
-            std::cout << str << ' ';
-        }
-        std::cout << '\n';
-    }
-}
-template<typename T>
-void printVec(std::vector<T>& vec)
-{
-    for(T& t:vec)
-    {
-        std::cout << t << ' ';
-    }
-    std::cout << '\n';
-}
-
-void printSet(std::unordered_set<std::string>& S)
-{
-
-    for(auto& str: S)
-    {
-        std::cout << str << ' ';
-    }
-    std::cout << '\n';
-}
-#define DONE -1
-
 class DSU
 {
 private:
+    std::vector<std::vector<std::string>> accounts;
     std::vector<int> parents;
-    std::vector<std::unordered_set<std::string>> mails;
+    std::vector<int> sizes;
     std::vector<std::string> names;
-    const int size;
+    std::unordered_map<std::string, int> mailToParent;
 
 public:
-    DSU(std::vector<std::vector<std::string>>&& accounts) : size{static_cast<int>(accounts.size())}
+
+    DSU(std::vector<std::vector<std::string>>&& accounts)
     {
-        this->parents = std::vector<int>(size);
-        std::iota(std::begin(this->parents), std::end(this->parents), 0);
-        this->mails = std::vector<std::unordered_set<std::string>> (size);
-        this->names = std::vector<std::string> (size);
-        for(int i = 0; i < size; ++i)
+        this->accounts = std::move(accounts);
+        const int n = this->accounts.size();
+        this->parents = std::vector<int> (n);
+        this->names = std::vector<std::string> (n);
+        this->sizes = std::vector<int>(n, 0);
+        std::iota(this->parents.begin(), this->parents.end(), 0);
+    }
+
+    void combine()
+    {
+        const int n = this->accounts.size();
+        for(int i = 0; i < n; ++i)
         {
-            this->mails[i] = std::unordered_set<std::string>(accounts[i].begin()+1, accounts[i].end());
-            this->names[i] = std::move(accounts[i].front());
+            const auto& info = accounts[i];
+            this->names[i] = info[0];
+            int localSize = info.size()-1;
+            bool needUnion = false;
+            std::unordered_set<int> unionTargets;
+            for(int j = 1; j < info.size(); ++j)
+            {
+                const auto& mail = info[j];
+                if(this->mailToParent.count(mail) == 1)
+                {
+                    --localSize;
+                    needUnion = true;
+                    unionTargets.insert(findWithPathComression(this->mailToParent[mail]));                    
+                }
+                else
+                {
+                    this->mailToParent[mail] = i;
+                }
+            }
+            this->sizes[i] += localSize;
+            unionTargets.insert(i);
+            while(unionTargets.size() > 1)
+            {
+                auto it = unionTargets.begin();
+                int target1 = this->findWithPathComression(*(it));
+                ++it;
+                int target2 = this->findWithPathComression(*(it));
+                unionTargets.erase(this->unionBySize(target1, target2));
+            }
         }
     }
 
-    std::vector<std::vector<std::string>> merge()
+    int unionBySize(int i, int j)
     {
-        bool change;
-        do
-        {
-            change = false;
-            for(int i = 0; i < this->size-1; ++i)
-            {
-                if(this->parents[i] == DONE)
-                {
-                    continue;
-                }
-                for(int j = i+1; j < this->size; ++j)
-                {
-                    if(i == j || this->parents[j] == DONE)
-                    {
-                        continue;
-                    }
-                    if(this->hasCommonAndNotLinkedOrDone(i, j))
-                    {
-                        this->unionBySize(this->findWithPathCompression(i), this->findWithPathCompression(j));
-                        change = true;
-                    }
-                }
-            }
-
-            for(int i = 0; i < this->size; ++i)
-            {  
-                if(this->findWithPathCompression(i) != i && this->parents[i] != DONE)
-                {
-                    auto& parentMails =  this->mails[this->parents[i]];
-                    parentMails.insert(this->mails[i].begin(), this->mails[i].end());
-                    this->parents[i] = DONE;
-                }
-            }
-        }while(change);
-
-        std::vector<std::vector<std::string>> ret;
-
-        for(int i = 0; i < size; ++i)
-        {
-            if(this->parents[i] == i)
-            {
-                std::vector<std::string> account(1+this->mails[i].size());
-                account[0] = this->names[i];
-                int j = 1;
-                for(auto& mail:this->mails[i])
-                {
-                    account[j++] = mail;
-                }
-                std::sort(account.begin()+1, account.end());
-                ret.push_back(std::move(account));
-            }
-        }
-        return ret;
-    }
-
-    bool hasCommonAndNotLinkedOrDone(int i, int j)
-    {
-        if(this->parents[i] == j || this->parents[j] == i || this->parents[i] == this->parents[j])
-        {
-            return false;
-        }
-
-        if(this->mails[i].size() > this->mails[j].size())
+        if(this->sizes[i] >= this->sizes[j])
         {
             std::swap(i, j);
         }
+        this->parents[i] = j;
+        this->sizes[j] += this->sizes[i];
+        return i;//be child
+    };
 
-        for(auto& mail: this->mails[i])
-        {
-            if(this->mails[j].count(mail) == 1)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void unionBySize(int i, int j)
+    int findWithPathComression(int i)
     {
-        if(this->mails[i].size() == this->mails[j].size() && i > j)
-        {
-            std::swap(i, j);
-        }
-        else if(this->mails[i].size() > this->mails[j].size())
-        {
-            std::swap(i, j);
-        }
-        this->parents[i] = j; 
-    }
-
-    int findWithPathCompression(int i)
-    {
-        if(this->parents[i] == DONE)
-        {
-            return DONE;
-        }
-        if(this->parents[i] == i)
+        if(i == this->parents[i])
         {
             return i;
         }
-
-        this->parents[i] = this->findWithPathCompression(this->parents[i]);
+        this->parents[i] = this->findWithPathComression(this->parents[i]);
         return this->parents[i];
-    }
+    };
 
+    std::vector<std::vector<std::string>> output()
+    {
+        std::unordered_map<int, std::vector<std::string>> resultSet;
+
+        for(auto& p: this->mailToParent)
+        {
+            auto& mail = p.first;
+            int parent = this->findWithPathComression(this->parents[p.second]);
+
+            if(resultSet.count(parent) == 0)
+            {
+                resultSet[parent] = {this->names[parent]};
+            }
+            resultSet[parent].push_back(mail);
+        }
+        
+        std::vector<std::vector<std::string>> ret;
+        for(auto& p: resultSet)
+        {
+            ret.push_back(p.second);
+            std::sort(ret.back().begin()+1, ret.back().end());
+        }
+        return ret;
+    }
+    
 };
 
-class Solution 
+
+class Solution
 {
 public:
     std::vector<std::vector<std::string>> accountsMerge(std::vector<std::vector<std::string>>& accounts) 
     {
         auto dsu = DSU(std::move(accounts));
-        return dsu.merge();
+        dsu.combine();
+        return dsu.output();
     }
 };
