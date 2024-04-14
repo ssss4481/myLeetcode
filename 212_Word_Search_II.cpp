@@ -1,88 +1,81 @@
 #include <vector>
-#include <iostream>
-#include <unordered_map>
 #include <string>
-using namespace std;
 
-class Solution
-{
+class TrieNode{
 public:
-    vector<vector<bool>>& visit;
-    unordered_map <char, unordered_map>;
-
-    Solution()
-    {
-        this->visit = (board.size(), vector<bool>(board[0].size(), false));
-    }
-    bool DFS(string& target, int i, vector<vector<char>>& board, int x, int y)
-    {
-        if(x < 0 || y < 0 || x >= board.size() || y >= board[0].size() || this->visit[x][y] != 0 || target[i] !=  board[x][y])
-            return false;
-
-        if(i == target.size()-1)
-            return true;
-
-        this->visit[x][y] = true;
-        ++i;
-
-        bool result = DFS(target, i, board, x+1, y, this->visit) || DFS(target, i, board, x-1, y, this->visit) || DFS(target, i, board, x, y+1, this->visit) || DFS(target, i, board, x, y-1, this->visit);
-
-        if(result)
-            return result;
-
-        this->visit[x][y] = false;
-        return result;
-    }
-
-
-    vector<string> findWords(vector<vector<char>>& board, vector<string>& words)
-    {
-        vector<string> ret;
-        for(auto& word: words)
-        {
-            //cout << word << "\n";
-            bool found = false;
-            for(auto& vec: visit)
-            {
-                fill(vec.begin(), vec.end(), false);
-            }
-
-            for(int x = 0; x < board.size(); ++x)
-            {
-                for(int y = 0; y < board[0].size(); ++y)
-                {
-                    if(DFS(word, 0, board, x, y))
-                    {
-                        ret.push_back(word);
-                        found = true;
-                        break;
-                    }
-                }
-                if(found)
-                {
-                    break;
-                }
-            }
+    TrieNode* next[26];
+    std::string word;
+    TrieNode(){    
+        for(int i = 0; i < 26; ++i){
+            next[i] = nullptr;
         }
-        return ret;
+        this->word = "";
     }
 };
 
 
-int main()
-{
-    vector<vector<char>> testCase = {{'o', 'a', 'a', 'n'}, {'e', 't', 'a', 'e'}, {'i', 'h', 'k', 'r'}, {'i', 'f', 'l', 'v'}};
-    vector<vector<char>> testCase2 = {{'a', 'b'}};
-    vector<string> targets = {"oath"};
-    vector<string> targets2 = {"ba"};
-    //cout << testCase2.size() <<  testCase2[0].size();
-    Solution sol = Solution();
-    vector<string> ret = sol.findWords(testCase2, targets2);
+class Solution {
+public:
+    int m;
+    int n;
+    std::vector<std::string> ret;
 
-    for(auto& res: ret)
-    {
-        cout << res << "\n";
+    std::vector<std::string> findWords(std::vector<std::vector<char>>& board, std::vector<std::string>& words){
+        this->m = board.size();
+        this->n = board[0].size();
+
+        auto root = new TrieNode();
+
+        for(const auto& word: words){
+            auto current = root;
+            for(int i = 0; i < word.length(); ++i){
+                if(current->next[word[i]-'a'] == nullptr)
+                {
+                    current->next[word[i]-'a'] = new TrieNode();
+                }
+                current = current->next[word[i]-'a'];
+            }
+            current->word = word;
+        }
+
+        for(int i = 0; i < this->m; ++i){
+            for(int j = 0; j < this->n; ++j){
+                DFS(board, i, j, root);
+            }
+        }
+        return this->ret;
     }
 
-    return 0;
-}
+    void DFS(std::vector<std::vector<char>>& board, int i, int j, TrieNode* current){
+        if(board[i][j] == '#'){
+            return;
+        }
+
+        auto next = current->next[board[i][j]-'a'];
+
+        if(next == nullptr){
+            return;
+        }
+
+        if(next->word != ""){
+            this->ret.push_back(next->word);
+            next->word = "";
+        }
+
+        char c = board[i][j];
+        board[i][j] = '#';
+        if(i > 0){
+            DFS(board, i-1, j, next);
+        }
+        if(i < this->m-1){
+            DFS(board, i+1, j, next);
+        }
+        if(j > 0){
+            DFS(board, i, j-1, next);
+        }
+        if(j < this->n-1){
+            DFS(board, i, j+1, next);
+        }
+        board[i][j] = c;
+    }
+};

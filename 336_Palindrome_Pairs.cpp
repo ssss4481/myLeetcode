@@ -21,18 +21,18 @@ class TrieNode
         map<char, TrieNode*> links;
 
 
-}
+};
 
 
 class Trie
 {
+    private:
+            TrieNode* root;
     public:
         Trie()
         {
-            root = new TrieNode();
-        }
-    private:
-            Trie* root;
+            this->root = new TrieNode();
+        }            
 };
 
 
