@@ -1,8 +1,34 @@
 #include <iostream>
 #include "ListNode.hpp"
-using namespace std;
 
-class Solution 
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(head == nullptr || head->next == nullptr){
+            return head;
+        }
+        return recursiveSwap(head);
+    }
+
+    ListNode* recursiveSwap(ListNode* pNode){
+        if(pNode == nullptr || pNode->next == nullptr){
+            return pNode;
+        }
+
+        auto first = pNode;
+        auto second = pNode->next;
+
+        auto nextPairFirst = recursiveSwap(second->next);
+        
+        second->next = first;
+        first->next = nextPairFirst;
+
+        return second;
+    }
+};
+
+
+class Solution1 
 {
 public:
     void swap(ListNode* first, ListNode* second)
@@ -10,8 +36,6 @@ public:
         ListNode* temp = second->next;        
         second->next = first;
         first->next = temp;
-
-        //cout << first->val << " " << second->val << " " << first->next->val << " " << second->next->val <<"\n";
     }
 
 
@@ -24,17 +48,13 @@ public:
         ListNode* second = nullptr;     
         while(current != nullptr)
         {
-            //cout << current->val << "\n";
             first = current;
             second = current->next;
             if(second == nullptr)
                 break;
-            //cout<< first->val << second->val;
-            //exit(0);
             if(first != nullptr && second != nullptr)
             {
                 this->swap(first, second);
-                //cout << first->val << " " << second->val << " " << first->next->val << " " << second->next->val <<"\n";
                 tailOfPreviousPair->next = second;                
                 if(tailOfPreviousPair == fakeNode)
                     head = second;
@@ -48,32 +68,3 @@ public:
         return head;        
     }
 };
-
-void trace(ListNode* Node)
-{
-    while(Node != nullptr)
-    {
-        cout << Node->val << "\n";
-        Node = Node->next;
-    }
-}
-
-
-int main()
-{
-    ListNode* head = new ListNode(1);
-    head->next = new ListNode(2);
-    head->next->next = new ListNode(3);
-    head->next->next->next = new ListNode(4);
-
-    trace(head);
-
-    Solution sol = Solution();
-    head = sol.swapPairs(head);
-    cout << "---\n";
-
-    trace(head);
-
-
-    return 0;
-}

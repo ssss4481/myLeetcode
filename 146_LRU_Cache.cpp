@@ -1,68 +1,41 @@
 #include <unordered_map>
-#include <queue>
-#include <algorithm>
+#include <list>
 
 
-class LRUCache 
-{
+class LRUCache {
 private:
-    std::unordered_map<int, int> cache;
-    std::unordered_map<int, int> mostResentlyUsedTime;
-    std::queue< std::pair<int, int> > Q;
+    std::unordered_map<int, std::list<std::pair<int, int>>::iterator> KeyToNode;
+    std::list<std::pair<int, int>> Cache;
     int capacity;
-    int tic;
 
 public:
-    LRUCache(int capacity) 
-    {
-        this->capacity = capacity;        
-        this->tic = 0;
+    LRUCache(int capacity) {
+        this->capacity = capacity;
     }
     
-    int get(int key) 
-    {
-        if(this->cache.count(key) == 0)
-        {
-            return -1;
+    int get(int key) {
+        if(this->KeyToNode.count(key) == 1){
+            auto node = this->KeyToNode[key];
+            this->Cache.splice(this->Cache.begin(), this->Cache, node);
+            return node->second;
         }
-        else
-        {
-            this->mostResentlyUsedTime[key] = this->tic;
-            this->Q.push(std::make_pair(key, this->tic));
-            ++this->tic;
-            return this->cache[key];
-        }        
+        return -1;
     }
-
-    void LRU(int key)
-    {
-        this->mostResentlyUsedTime[key] = this->tic;
-        this->Q.push(std::make_pair(key, this->tic));
-        ++this->tic;
-
-        if(this->cache.size() <= capacity)
-        {
+    
+    void put(int key, int value) {
+        if(this->KeyToNode.count(key)){
+            auto node = this->KeyToNode[key];
+            this->Cache.splice(this->Cache.begin(), this->Cache, node);
+            node->second = value;
             return;
         }
-        else
-        {
-            while(1)
-            {
-                std::pair<int, int>& head = this->Q.front();
-                if(this->mostResentlyUsedTime.count(head.first) != 0 && head.second == this->mostResentlyUsedTime[head.first])
-                {
-                    this->cache.erase(head.first);
-                    this->mostResentlyUsedTime.erase(head.first);
-                    break;
-                }
-                this->Q.pop();
-            }
+
+        if(this->Cache.size() == this->capacity){
+            this->KeyToNode.erase(this->Cache.back().first);
+            this->Cache.pop_back();
         }
-    }
-    
-    void put(int key, int value) 
-    {       
-        this->cache[key] = value;
-        LRU(key);        
+        this->Cache.push_front({key, value});
+        this->KeyToNode[key] = this->Cache.begin();
     }
 };
+
