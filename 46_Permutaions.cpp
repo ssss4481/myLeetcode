@@ -3,7 +3,31 @@
 
 using namespace std;
 
-class Solution 
+
+class Solution {
+public:
+    std::vector<std::vector<int>> permute(std::vector<int>& nums) {
+        std::vector<std::vector<int>> ret;
+        permutation(nums, 0, ret);
+        return ret;
+    }
+    
+    void permutation(std::vector<int>& nums, int i, std::vector<std::vector<int>>& ret){
+        if(i == nums.size()){
+            ret.push_back(nums);
+            return;
+        }
+
+        for(int j = i; j < nums.size(); ++j){
+            std::swap(nums[i], nums[j]);
+            permutation(nums, i+1, ret);
+            std::swap(nums[i], nums[j]);
+        }
+    }
+};
+
+
+class Solution1 
 {
 public: 
     // void vectorSwap(vector<int>& nums, int depth, int i)
