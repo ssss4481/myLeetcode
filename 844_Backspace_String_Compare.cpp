@@ -2,15 +2,35 @@
 #include <iostream>
 #include <vector>
 
-class Solution 
+class Solution{//O(1) space
+public:
+    bool backspaceCompare(std::string s, std::string t) {
+
+        auto fixString = [](std::string& str){
+            for(int i = 0; i < str.size(); ++i){
+                if(str[i] == '#'){
+                    if(i > 0){
+                        str.erase(i-1, 2);
+                        i-=2;
+                    }
+                    else{
+                        str.erase(i, 1);
+                        --i;
+                    }
+                }
+            }
+        };
+
+        fixString(s);
+        fixString(t);
+        return s == t;
+    }
+};
+
+
+class Solution1
 {
 public:
-    Solution()
-    {
-        std::ios_base::sync_with_stdio(false);
-        std::cin.tie(NULL);
-        std::cout.tie(NULL);
-    }
     bool backspaceCompare(std::string s, std::string t) 
     {
         std::vector<char> s_stack;
