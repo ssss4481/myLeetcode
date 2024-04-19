@@ -1,60 +1,40 @@
-#include <iostream>
+#include <string>
 #include <stack>
-#include <set>
-using namespace std;
 
-class Solution
-{
+class Solution {
 public:
-    char returnLeftParentheses(char rP)
-    {
-        switch (rP)
-        {
-            case ')':
-                return '(';
-            case ']':
-                return '[';
-            case '}':
-                return '{';
-            default:
-                return 'x';
+    bool isValid(std::string s) {
+        std::stack<char> BracketStack;
+        
+        for(auto& c: s){
+            if(isLeft(c)){
+                BracketStack.push(c);
+            }else{
+                if(BracketStack.empty() || leftBracket(c) != BracketStack.top()){
+                    return false;
+                }
+                BracketStack.pop();
+            }
         }
+        return BracketStack.empty();
     }
-    bool isValid(string s)
-    {
-        stack<char> leftParenthesesStack;
-        set<char> leftSide ({'(', '[', '{'});
 
-        for(int i = 0; i < s.length(); ++i)
-        {
-            if(leftSide.count(s[i]) == 1)
-            {
-                //cout << "push" << s[i] << "\n";
-                leftParenthesesStack.push(s[i]);
-                continue;
-            }
-            if(leftParenthesesStack.empty() || (leftParenthesesStack.top() != this->returnLeftParentheses(s[i])))
-            {
-                //cout << "F1\n";
-                return false;
-            }
-            leftParenthesesStack.pop();
+    bool isLeft(char c){
+        return c == '(' || c == '[' || c == '{';
+    }
+
+    char leftBracket(char right){
+        if(right == ')'){
+            return '(';
         }
-        if(!leftParenthesesStack.empty())
-        {
-            //cout << "F2\n";
-            return false;
+
+        if(right == ']'){
+            return '[';
         }
-        return true;
+
+        if(right == '}'){
+            return '{';
+        }
+        return 'x';
     }
 };
-
-
-int main(int argc, char const *argv[])
-{
-    Solution sol = Solution();
-
-    sol.isValid("()");
-
-    return 0;
-}

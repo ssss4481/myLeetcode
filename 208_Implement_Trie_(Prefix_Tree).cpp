@@ -1,118 +1,79 @@
-#include <vector>
 #include <string>
 #include <iostream>
-#include <string.h>
-using namespace std;
 
-int ch(char c)
+const int fast_io = []()
 {
-    return int(c - 'a');
-}
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
 
 
-class Trie 
-{
-public:
-    bool end;
-    vector<Trie*> pTrieArr;
-
-    Trie()
-    {
-        this->end = false;
-        this->pTrieArr = vector<Trie*>(26, nullptr);
-    }
-
-
-    Trie(bool end) 
-    {
-        this->end = end;      
-        this->pTrieArr = vector<Trie*>(26, nullptr);
-    }
-    
-    void insert(string word) 
-    {
-        insertHelper(word, 0);
-    }
-
-    void insertHelper(string& word, int idx)
-    {
-        auto& pTrie = this->pTrieArr[ch(word[idx])];
-
-        if(idx < word.length()-1)
-        {
-            if(pTrie == nullptr)
-            {
-                pTrie = new Trie(false);            
-            }
-            pTrie->insertHelper(word, idx+1);
-        }
-        else if(idx == word.length()-1)
-        {
-            if(pTrie != nullptr)
-            {
-                pTrie->end = true;
-            }
-            else
-            {
-                pTrie = new Trie(true);
-            }
-        }
-    }
-    
-    bool search(string word) 
-    {
-        return this->searchHelper(word, 0);
-    }
-
-    bool searchHelper(string& word, int idx) const
-    {   
-        auto& pTrie = this->pTrieArr[ch(word[idx])];
-        if(pTrie == nullptr)
-        {
-            return false;
-        }
-        if(idx == word.length()-1)
-        {
-            return pTrie->end;
-        }  
-        return pTrie->searchHelper(word, idx+1);
-    }
-    
-    bool startsWith(string prefix) 
-    {
-        return this->startsWithHelper(prefix, 0);      
-    }
-
-    bool startsWithHelper (string& prefix, int idx) const
-    {    
-        auto& pTrie = this->pTrieArr[ch(prefix[idx])];
-        if(pTrie == nullptr)
-        {
-            return false;
-        }               
-
-        if(idx == prefix.length()-1)
-        {
-            return true;
-        }
-        return pTrie->startsWithHelper(prefix, idx+1);
+struct TrieNode{
+    TrieNode* nextChar[26] = {nullptr};
+    bool isWord;
+    TrieNode(){
+        isWord = false;
     }
 };
 
 
-
-int main(int argc, char const *argv[])
-{
-    auto a = Trie();
-    a.insert("abc");
-    cout << a.search("ab") <<'\n';
-    cout << a.search("abc") <<'\n';
-    cout << a.search("abcd") <<'\n';
-    a.insert("ab");
-    cout << a.search("ab") <<'\n';
-
-
-
-    
-    return 0;
+inline int idx(char c){
+    return int(c-'a');
 }
+
+class Trie {
+private:
+    TrieNode* firstChar[26] = {nullptr};
+
+public:
+    Trie(){}
+
+
+    void insert(std::string word) {
+        if(this->firstChar[idx(word[0])] == nullptr){
+            this->firstChar[idx(word[0])] = new TrieNode();
+        }
+        auto pNode = this->firstChar[idx(word[0])];
+        for(int i = 1; i < word.length(); ++i){
+            if(pNode->nextChar[idx(word[i])] == nullptr){
+                pNode->nextChar[idx(word[i])] = new TrieNode();
+            }
+            pNode = pNode->nextChar[idx(word[i])];
+        }
+        pNode->isWord = true;
+    }
+
+    bool search(std::string word) {
+        auto pNode = this->firstChar[idx(word[0])];
+        
+        if(pNode == nullptr){
+            return false;
+        }
+        
+        for(int i = 1; i < word.length(); ++i){
+            if(pNode->nextChar[idx(word[i])] == nullptr){
+                return false;
+            }
+        
+            pNode = pNode->nextChar[idx(word[i])];
+        }
+        return pNode->isWord;
+    }
+    
+    bool startsWith(std::string prefix) {
+        auto pNode = this->firstChar[idx(prefix[0])];
+        if(pNode == nullptr){
+            return false;
+        }
+        for(int i = 1; i < prefix.length(); ++i){
+            if(pNode->nextChar[idx(prefix[i])] == nullptr){
+                return false;
+            }
+            pNode = pNode->nextChar[idx(prefix[i])];
+        }
+        return true;
+    }
+};
+
