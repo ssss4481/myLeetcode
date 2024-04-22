@@ -10,7 +10,7 @@ public:
         
         int ret = 0;
         for(int c = 'A'; c <= 'Z'; ++c){
-            if(found[c] && found[c+'a'-'A']){
+            if(found[c] && found[c+'a'-'A']){+
                 ++ret;
             }
         }
