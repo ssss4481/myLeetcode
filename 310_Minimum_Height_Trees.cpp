@@ -1,7 +1,6 @@
-#include <vector>
-#include <algorithm>
-#include <unordered_set>
 #include <iostream>
+#include <vector>
+#include <queue>
 
 static const int fast_io = []()
 {
@@ -11,89 +10,51 @@ static const int fast_io = []()
     return 0;
 }();
 
-class Solution 
-{
+
+class Solution {
 public:
+    std::vector<int> findMinHeightTrees(int n, std::vector<std::vector<int>>& edges) {
+        std::vector<std::vector<int>> adj(n);
+        int order[n];
+        memset(order, 0, n*sizeof(int));
 
-    std::vector<int> findMinHeightTrees(int n, std::vector<std::vector<int>>& edges) 
-    {
-        std::vector<std::unordered_set<int>> adj(n, std::unordered_set<int>());
-        int validCount = n;
-        if(n == 1)
-        {
-            return {0};
-        }
-        if(n == 2)
-        {
-            return {0, 1};
+        for(auto& edge: edges){
+            adj[edge[0]].push_back(edge[1]);
+            adj[edge[1]].push_back(edge[0]);
+            ++order[edge[0]];
+            ++order[edge[1]];
         }
 
+        std::queue<int> Q1;
 
-        for(auto& edge: edges)
-        {
-            adj[edge[0]].insert(edge[1]);
-            adj[edge[1]].insert(edge[0]);
-        }
-
-        std::unordered_set<int> retSet;
-        std::vector<int> removeTargets;
-
-
-        for(int i = 0; i < n; ++i)
-        {
-            if(adj[i].size() == 1)
-            {
-                --validCount;
-                removeTargets.push_back(i);
+        for(int i = 0; i < n; ++i){
+            if(order[i] <= 1){
+                Q1.push(i);
             }
-        }    
+        }
 
-        if(validCount <= 2)
-        {
-            for(auto& target: removeTargets)
-            {
-                retSet.insert(*adj[target].begin());
-            }
-        }            
-
-        while(validCount > 2)
-        {
-            std::vector<int> nextRoundRemoveTarget;
-
-            for(auto& target: removeTargets)
-            {
-                adj[*adj[target].begin()].erase(target);
-                if(adj[*adj[target].begin()].size() == 1)
-                {
-                    nextRoundRemoveTarget.push_back(*adj[target].begin());
-                    --validCount;
-                }
-            } 
-
-            removeTargets.swap(nextRoundRemoveTarget);
-            if(validCount <= 2)
-            {
-                for(auto& target: removeTargets)
-                {
-                    retSet.insert(*adj[target].begin());
+        int valid_count = n;
+        while(valid_count > 2){
+            std::queue<int> Q2;
+            valid_count -= Q1.size();
+            while(!Q1.empty()){
+                int node = Q1.front();
+                Q1.pop();
+                for(auto& next: adj[node]){
+                    if(--order[next] == 1){
+                        Q2.push(next);
+                    }
                 }
             }
+            Q1.swap(Q2);
         }
 
-        std::vector<int> retVec;
-        retVec.reserve(validCount);
-        for (auto it = retSet.begin(); it != retSet.end(); ) 
-        {
-            retVec.push_back(std::move(retSet.extract(it++).value()));
+        std::vector<int> ret;
+        while(!Q1.empty()){
+            ret.push_back(Q1.front());
+            Q1.pop();
         }
 
-
-        return retVec;
+        return ret;
     }
 };
-
-
-
-
-
-
