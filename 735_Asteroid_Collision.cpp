@@ -1,6 +1,30 @@
 #include <vector>
 #include <numeric>
 #include <iostream>
+
+class Solution {
+public:
+    std::vector<int> asteroidCollision(std::vector<int>& asteroids) {
+        std::vector<int> ans;
+
+        for(auto& asteroid: asteroids){
+            if(asteroid > 0 || ans.empty() || ans.back() < 0){
+                ans.push_back(asteroid);
+            }else{               
+                while(!ans.empty() && ans.back() > 0 && ans.back() < -asteroid){
+                    ans.pop_back();
+                }
+                if(ans.empty() || ans.back() < 0){
+                    ans.push_back(asteroid);
+                }else if(ans.back() == -asteroid){
+                    ans.pop_back();
+                }
+            }
+        }
+        return ans;
+    }
+};
+
 using namespace std;
 
 class Solution

@@ -1,9 +1,61 @@
 #include <vector>
 #include "TreeNode.hpp"
 
+class Solution {
+public:
+    std::vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        std::vector<TreeNode*> root_to_target;
+        bool found = false;
+        DFS(root, target, found, root_to_target);
+
+        int i = root_to_target.size()-1;
+        std::vector<int> ret_nodes;
+        
+        while(k >= 0 && i >= 0){
+            TreeNode* avoid_path = i < root_to_target.size()-1 ? root_to_target[i+1] : nullptr;
+            find_node_with_condition(root_to_target[i], avoid_path, ret_nodes, 0, k);
+            --i;
+            --k;
+        }
+        return ret_nodes;
+    }
+
+    void DFS(TreeNode* pNode, const TreeNode* target, bool& found, std::vector<TreeNode*>& root_to_target){
+        if(pNode == nullptr || found){
+            return;
+        }
+        root_to_target.push_back(pNode);
+        if(pNode == target){
+            found = true;
+            return;
+        }
+
+        DFS(pNode->left, target, found, root_to_target);
+        DFS(pNode->right, target, found, root_to_target);
+
+        if(!found){
+            root_to_target.pop_back();
+        }
+    }
+
+    void find_node_with_condition(TreeNode* pNode, const TreeNode* avoid_path, std::vector<int>& ret_nodes, int current_depth, const int target_depth){
+        if(pNode == nullptr || pNode == avoid_path){
+            return;
+        }
+        if(current_depth == target_depth){
+            ret_nodes.push_back(pNode->val);
+            return;
+        }
+        find_node_with_condition(pNode->left, avoid_path, ret_nodes, current_depth+1, target_depth);
+        find_node_with_condition(pNode->right, avoid_path, ret_nodes, current_depth+1, target_depth);
+    }
+
+};
+
+
 using namespace std;
 
-class Solution 
+class Solution2//Old 
 {
 private:
     vector<int> ret;
