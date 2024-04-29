@@ -1,22 +1,48 @@
 #include <vector>
-#include <unordered_set>
-using namespace std;
 
-
-class Solution 
-{
+class Solution {
 public:
-    int findDuplicate(vector<int>& nums) 
-    {
-        vector<char> HS(100001, 0);
-        for(auto& num: nums)
-        {
-            if(HS.at(num) == 1)
-            {
-                return num;
+    int findDuplicate(std::vector<int>& nums) {
+        int s = 0;
+        int f = 0;
+
+        while(s != f){
+            s = nums[s];
+            f = nums[f];
+        }
+        int t = 0;
+
+        while(s != t){
+            s = nums[s];
+            t = nums[f];
+        }
+
+        return s;
+    }
+};
+
+
+
+class Solution1 {
+public:
+    int findDuplicate(std::vector<int>& nums) {
+        int lo = 1;
+        int hi = nums.size();
+
+        while(lo < hi){
+            int mid = lo + (hi-lo)/2;
+            int count = 0;
+            for(auto& n : nums){
+                if(n <= mid){
+                    ++count;
+                }
             }
-            HS.at(num) = 1;
-        }     
-        return -1;
+            if(count <= mid){
+                lo = mid+1;
+            }else{
+                hi = mid;
+            }
+        }
+        return hi;
     }
 };
