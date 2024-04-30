@@ -1,5 +1,5 @@
-#include <string>
 #include <stack>
+#include <string>
 
 class Solution {
 public:
