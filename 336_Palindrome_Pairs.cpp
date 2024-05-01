@@ -1,95 +1,61 @@
 #include <vector>
 #include <string>
-#include <map>
-
-using namespace std;
-class TrieNode
+#include <set>
+#include <unordered_map>
+#include <iostream>
+const int fast_io = []()
 {
-    public:
-        TrieNode()
-        {
-            this->idx = -1;
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+
+class Solution {
+public:
+    std::vector<std::vector<int>> palindromePairs(std::vector<std::string>& words) {
+        std::unordered_map<std::string, int> word_to_index_map;
+        std::set<int> len_set;
+
+        for(int i = 0; i < words.size(); ++i){
+            word_to_index_map[words[i]] = i;
+            len_set.insert(words[i].size());
         }
-        TrieNode(int idx, char c)
-        {
-            this->idx = idx;
 
-        }
-    private:
-        int idx;
-        char c;
-        map<char, TrieNode*> links;
+        std::vector<std::vector<int>> result;
 
-
-};
-
-
-class Trie
-{
-    private:
-            TrieNode* root;
-    public:
-        Trie()
-        {
-            this->root = new TrieNode();
-        }            
-};
-
-
-class Solution
-{
-    vector<vector<int>> palindromePairs(vector<string>& words)
-    {
-        vector<vector<int>> ret;
-        return ret;
-    }
-
-
-};
-
-
-
-
-
-
-class Solution1 {
-    public:
-        bool palindromeChecker(const string& a, const string& b)
-        {
-            string temp = a + b;
-            int lo = 0;
-            int hi = temp.size()-1;
-            while(lo < hi)
-            {
-                if(temp[lo] != temp[hi])
-                    return false;
-
-                ++lo;
-                --hi;
+        for(int i = 0; i < words.size(); ++i){
+            std::string s = words[i];
+            std::reverse(s.begin(), s.end());
+            if(word_to_index_map.count(s) != 0 && i != word_to_index_map[s]){
+                result.push_back({i, word_to_index_map[s]});
             }
-            return true;
-        }
-
-
-
-        vector<vector<int>> palindromePairs(vector<string>& words)
-        {
-            vector<vector<int>> ret;
-            for(int i = 0; i < words.size(); ++i)
-            {
-                for(int j = i+1; j < words.size(); ++j)
-                {
-                    if(palindromeChecker(words[i], words[j]))
-                        ret.push_back({i, j});
-                    if(palindromeChecker(words[j], words[i]))
-                        ret.push_back({j, i});
+            int len = s.size();
+            for(auto it = len_set.begin(); *it < len; ++it){
+                int c_len = *it;
+                if(isPalindrome(s, c_len, len-1)){
+                    std::string candidate = s.substr(0, c_len);
+                    if(word_to_index_map.count(candidate) == 1){
+                        result.push_back({word_to_index_map[candidate], i});
+                    }
+                }
+                if(isPalindrome(s, 0, len-c_len-1)){
+                    std::string candidate = s.substr(len-c_len);
+                    if(word_to_index_map.count(candidate) == 1){
+                        result.push_back({i, word_to_index_map[candidate]});
+                    }                    
                 }
             }
-            return ret;
         }
-};
+        return result;
+    }
 
-int main()
-{
-    return 0;
-}
+    bool isPalindrome(std::string& s, int lo, int hi){
+        while(lo < hi){
+            if(s[lo++] != s[hi--]){
+                return false;
+            }
+        }
+        return true;
+    }
+};

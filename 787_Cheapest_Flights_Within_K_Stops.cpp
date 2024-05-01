@@ -1,8 +1,7 @@
 #include <vector>
-#include <queue>
 #include <algorithm>
-#include <unordered_set>
 #include <iostream>
+#include <unordered_set>
 
 static const int fast_io = []()
 {
@@ -12,8 +11,32 @@ static const int fast_io = []()
     return 0;
 }();
 
+class Solution {
+public:
+    int findCheapestPrice(int n, std::vector<std::vector<int>>& flights, int src, int dst, int k) {
+        std::vector<int> cost(n, INT_MAX);
 
-class Solution 
+        for(auto& flight: flights){
+            if(flight[0] == src){
+                cost[flight[1]] = flight[2];
+            }
+        }
+        cost[src] = 0;
+        for(int i = 1; i <= k; ++i){
+            std::vector<int> cost_prev = cost;
+            for(auto& flight: flights){
+                if((cost_prev[flight[0]]) != INT_MAX){
+                    cost[flight[1]] = std::min(cost[flight[1]], cost_prev[flight[0]]+flight[2]);
+                }
+            }
+        }
+        return cost[dst] == INT_MAX ? -1 : cost[dst];
+    }
+};
+
+
+
+class Solution1 
 {
 public:
     int findCheapestPrice(int n, std::vector<std::vector<int>>& flights, int src, int dst, int k) 
@@ -32,6 +55,7 @@ public:
         std::unordered_set<int> Q1;
         std::unordered_set<int> Q2;
         
+        //city, key
         Q1.insert(src);
         int stop = 0;
 
@@ -58,8 +82,3 @@ public:
         return ans[dst] == ceiling ? -1 : ans[dst];
     }
 };
-
-int main(int argc, char const *argv[])
-{
-    return 0;
-}
