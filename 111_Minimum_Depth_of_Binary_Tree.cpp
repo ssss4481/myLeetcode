@@ -1,8 +1,33 @@
 #include <queue>
 #include <iostream>
+#include <climits>
 #include "TreeNode.hpp"
 
-class Solution 
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if(root == nullptr){
+            return 0;
+        }
+        int left = minDepth(root->left);
+        int right = minDepth(root->right);
+        if(left == 0 || right == 0){
+            return std::max(left, right)+1;
+        }else{
+            return std::min(left, right)+1;
+        }
+    }
+};
+
+class Solution1 
 {
 public:
     bool isLeaf(TreeNode* pNode)
