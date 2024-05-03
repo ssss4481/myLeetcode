@@ -1,7 +1,52 @@
 #include <vector>
 #include <string>
+#include <sstream>
 
 class Solution {
+public:
+    int compareVersion(std::string version1, std::string version2) {
+
+        auto split_to_ints = [](std::string& version){
+            std::vector<int> res;
+            std::stringstream ss(version);
+            std::string v;
+            while(std::getline(ss, v, '.')){
+                res.push_back(std::stoi(v));
+            }
+            return res;
+        };
+
+        std::vector<int> v1 = split_to_ints(version1);
+        std::vector<int> v2 = split_to_ints(version2);
+        bool flip = false;
+        if(v1.size() > v2.size()){
+            v1.swap(v2);
+            flip = true;
+        }
+        int res;
+        int i = 0;
+        while(i < v1.size()){
+            if(v1[i] < v2[i]){
+                return flip ? 1 : -1;
+            }else if(v1[i] > v2[i]){
+                return flip ? -1 : 1;
+            }
+            ++i;
+        }
+
+        while(i < v2.size()){
+            if(v2[i] != 0){
+                return flip ? 1 : -1;
+            }
+            ++i;
+        }
+
+        return 0;
+    }
+};
+
+
+class Solution1 {
 public:
     int compareVersion(std::string version1, std::string version2) {
         std::vector<int> dot_index1 = {-1};
