@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
+#include <climits>
 
 static const int fast_io = []()
 {
@@ -10,8 +12,52 @@ static const int fast_io = []()
     return 0;
 }();
 
+struct Pos{
+    int x;
+    int y;
+    Pos(){}
+    Pos(int _x, int _y):x{_x}, y{_y}{}
+};
 
-class Solution 
+class Solution {
+public:
+    std::vector<std::vector<int>> updateMatrix(std::vector<std::vector<int>>& mat) {
+        
+        const std::vector<std::vector<int>> dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        const int m = mat.size();
+        const int n = mat[0].size();
+        std::queue<Pos> Q;
+
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(mat[i][j] == 0){
+                    Q.push(Pos(i, j));
+                }else{
+                    mat[i][j] = INT_MAX;
+                }
+            }
+        }
+
+        while(!Q.empty()){
+            auto src = Q.front();
+            Q.pop();
+            for(auto& dir: dirs){
+                int x = src.x + dir[0];
+                int y = src.y + dir[1];
+                if(x < 0 || x >= m || y < 0 || y >= n || mat[x][y] <= mat[src.x][src.y]+1){
+                    continue;
+                }
+                mat[x][y] = mat[src.x][src.y]+1;
+                Q.push(Pos(x, y));
+            }
+        }
+
+        return mat;
+    }
+};
+
+
+class Solution1 
 {
 public:
     void updateDPElement(std::vector<std::vector<int>>& dp, int i, int j, int delta)
