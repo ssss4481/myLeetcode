@@ -1,15 +1,47 @@
-#include <set>
 #include <queue>
 #include <iostream>
-const int fast_io = []()
-{
-    std::ios_base::sync_with_stdio(false);
-    std::cin.tie(NULL);
-    std::cout.tie(NULL);
-    return 0;
-}();
+using namespace std;
+
 
 class MedianFinder {
+private:
+    priority_queue<double> PQ_small;
+    priority_queue<double, vector<double>, greater<double>> PQ_large;
+
+
+public:
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        PQ_large.push(num);
+        if(PQ_small.size() < PQ_large.size()){
+            PQ_small.push(PQ_large.top());
+            PQ_large.pop();
+        }
+
+        if(!PQ_large.empty()){
+            while(PQ_small.top() > PQ_large.top()){
+                PQ_large.push(PQ_small.top());
+                PQ_small.push(PQ_large.top());
+                PQ_large.pop();
+                PQ_small.pop();
+            }
+        }
+    }
+    
+    double findMedian() {
+        if(PQ_small.size() == PQ_large.size()){
+            return (PQ_small.top() + PQ_large.top())/2;
+        }else{
+            return PQ_small.top();
+        }
+    }
+};
+
+
+class MedianFinder2 {
 private:
     std::priority_queue<int> small_heap;
     std::priority_queue<int> large_heap;
