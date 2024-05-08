@@ -47,7 +47,7 @@ private:
     std::priority_queue<int> large_heap;
 
 public:
-    MedianFinder() {
+    MedianFinder2() {
     }
 
     
@@ -71,35 +71,3 @@ public:
 
 
 
-
-class MedianFinder1 {//too slow
-private:
-    std::multiset<int> st;
-
-public:
-    void addNum(int num) {
-        st.insert(num);
-    }
-    
-    double findMedian() {
-        int mid = st.size()/2;
-        auto it = st.begin();
-        while(mid-- > 0){
-            ++it;
-        }
-        int ret = *it;
-        if(st.size() % 2 == 0){
-            --it;
-            ret += *it;
-            return static_cast<double>(ret)/2;
-        }
-        return static_cast<double>(ret);
-    }
-};
-
-/**
- * Your MedianFinder object will be instantiated and called as such:
- * MedianFinder* obj = new MedianFinder();
- * obj->addNum(num);
- * double param_2 = obj->findMedian();
- */

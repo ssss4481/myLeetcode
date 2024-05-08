@@ -1,12 +1,23 @@
 #include <unordered_map>
 #include <list>
+#include <algorithm>
+#include <iostream>
 
+static const int fast_io = []()
+{
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(NULL);
+    std::cout.tie(NULL);
+    return 0;
+}();
+
+using namespace std;
 
 class LRUCache {
 private:
-    std::unordered_map<int, std::list<std::pair<int, int>>::iterator> KeyToNode;
-    std::list<std::pair<int, int>> Cache;
     int capacity;
+    list<pair<int, int>> cache;
+    unordered_map<int, list<pair<int, int>>::iterator> hashmap; //key to node
 
 public:
     LRUCache(int capacity) {
@@ -14,28 +25,40 @@ public:
     }
     
     int get(int key) {
-        if(this->KeyToNode.count(key) == 1){
-            auto node = this->KeyToNode[key];
-            this->Cache.splice(this->Cache.begin(), this->Cache, node);
-            return node->second;
+        if(hashmap.count(key) == 0){
+            return -1;
         }
-        return -1;
+        auto it = hashmap[key];
+        int value = (*it).second;
+        cache.erase(it);
+        cache.push_back({key, value});
+        it = cache.end();
+        --it;
+        hashmap[key] = it;
+        return value;
     }
-    
+
     void put(int key, int value) {
-        if(this->KeyToNode.count(key)){
-            auto node = this->KeyToNode[key];
-            this->Cache.splice(this->Cache.begin(), this->Cache, node);
-            node->second = value;
+        if(hashmap.count(key) == 1){
+            auto it = hashmap[key];
+            cache.erase(it);
+            cache.push_back({key, value});
+            it = cache.end();
+            --it;
+            hashmap[key] = it;
             return;
         }
 
-        if(this->Cache.size() == this->capacity){
-            this->KeyToNode.erase(this->Cache.back().first);
-            this->Cache.pop_back();
+        if(capacity > 0){
+            --capacity;
+        }else{
+            int key = cache.front().first;
+            cache.pop_front();
+            hashmap.erase(key);
         }
-        this->Cache.push_front({key, value});
-        this->KeyToNode[key] = this->Cache.begin();
+        cache.push_back({key, value});
+        auto it = cache.end();
+        --it;
+        hashmap[key] = it;            
     }
 };
-
