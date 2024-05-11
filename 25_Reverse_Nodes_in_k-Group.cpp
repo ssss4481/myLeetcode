@@ -9,7 +9,44 @@ static const int fast_io = []()
     return 0;
 }();
 
-class Solution {
+class Solution {//O(1) space
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head == nullptr || k == 1){
+            return head;
+        }
+
+        int len = 0;
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        while(head != nullptr){
+            ++len;
+            head = head->next;
+        }
+        ListNode* prev_group_last = dummy;
+        for(int i = 0; i+k-1 < len; i+=k){
+            ListNode* first = prev_group_last;
+            ListNode* second = first->next;
+            ListNode* next = second->next;
+            for(int j = 1; j <= k-1; ++j){
+                first = second;
+                second = next;
+                if(next != nullptr){
+                    next = next->next;
+                }
+                second->next = first;
+            }
+            ListNode* cur_group_last = prev_group_last->next;
+            cur_group_last->next = next;
+            prev_group_last->next = second;
+            prev_group_last = cur_group_last;
+        }
+
+        return dummy->next;
+    }
+};
+
+class Solution1 {//recursive
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
         bool grouped = false;
