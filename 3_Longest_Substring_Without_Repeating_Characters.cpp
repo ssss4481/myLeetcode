@@ -9,8 +9,33 @@ const int fast_io = []()
     std::cout.tie(NULL);
     return 0;
 }();
+using namespace std;
 //3. Longest Substring Without Repeating Characters
 class Solution 
+{
+public:
+    int lengthOfLongestSubstring(std::string s){
+        bool count[128] = {false};
+        int res = 0;
+        int lo = 0;
+        for(int i = 0; i < s.size(); ++i){
+            if(count[s[i]]){
+                res = max(res, i-lo);
+                while(s[lo] != s[i]){
+                    count[s[lo]] = false;
+                    ++lo;
+                }
+                ++lo;
+            }
+            count[s[i]] = true;
+        }
+        res = max(res, static_cast<int>(s.size())-lo);
+
+        return res;
+    }
+};
+
+class Solution1 
 {
 public:
     int lengthOfLongestSubstring(std::string s) 
@@ -36,8 +61,6 @@ public:
         return ret;
     }
 };
-
-
 
 
 class Solution3 

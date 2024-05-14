@@ -42,7 +42,9 @@ public:
             prev_group_last = cur_group_last;
         }
 
-        return dummy->next;
+        ListNode* res = dummy->next;
+        delete dummy;
+        return res;
     }
 };
 

@@ -11,6 +11,44 @@ static const int fast_io = []()
     return 0;
 }();
 
+using namespace std;
+
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        stack<int> num_st;
+
+        auto isOperator = [](const string& token){
+            return token == "+" || token == "-" || token == "*" || token == "/";
+        };
+
+        for(auto& token: tokens){
+            int new_num;
+            if(isOperator(token)){
+                int b = num_st.top();
+                num_st.pop();
+                int a = num_st.top();
+                num_st.pop();
+                if(token == "+"){
+                    new_num = a+b;
+                }else if(token == "-"){
+                    new_num = a-b;
+                }else if(token == "*"){
+                    new_num = a*b;
+                }else if(token == "/"){
+                    new_num = a/b;
+                }
+            }else{
+                new_num = stoi(token);
+            }
+            num_st.push(new_num);
+        }
+
+        return num_st.top();        
+    }
+};
+
+
 class Solution
 {
 public:

@@ -10,6 +10,47 @@ static const int fast_io = []()
     return 0;
 }();
 
+using namespace std;
+
+struct Point{
+    int index;
+    int key;
+    Point(){};
+    Point(int i, const vector<int>& point){
+        index = i;
+        key = point[0]*point[0] + point[1]*point[1];
+    }
+};
+
+class Solution {
+public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
+        auto cmp = [](const Point& p1, const Point& p2){
+            return p1.key > p2.key;
+        };
+
+        const int n = points.size();
+        vector<Point> PQ(n);
+
+        for(int i = 0; i < n; ++i){
+            PQ[i] = Point(i, points[i]);
+        }
+
+        make_heap(PQ.begin(), PQ.end(), cmp);
+
+        for(int i = 0; i < k; ++i){
+            pop_heap(PQ.begin(), PQ.begin()+(n-i), cmp);
+        }
+        vector<vector<int>> res;
+        auto it = PQ.rbegin();
+        for(int i = 0; i < k; ++i){
+            res.push_back(points[(*it).index]);
+            ++it;
+        }
+        return res;
+    }
+};
+
 typedef struct Data{
     int index;
     long long key;
