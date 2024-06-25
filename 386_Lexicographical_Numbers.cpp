@@ -17,7 +17,9 @@ public:
         vector<int> result;
         result.reserve(n);
         for(int i = 1; i <= 9; ++i){
-            DFS(result, n, i);
+            if(i <= n){
+                DFS(result, n, i);
+            }
         }
         return result;
     }
