@@ -2,16 +2,6 @@
 #include <unordered_set>
 #include "TreeNode.hpp"
 
-/*
-     p
-   /   \
-  t     s
- / \   / \
-
-
-*/
-
-
 class Solution 
 {
 public:
