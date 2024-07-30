@@ -8,3 +8,4 @@ static const int fast_io = []()
     return 0;
 }();
 
+using namespace std;
